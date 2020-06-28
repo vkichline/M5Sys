@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# To do a clean build, run 'build -c'
+# Just 'build' builds each dir w/o clean
+CLEAN_BUILD="0"
+if [ "-c" == "$1" ]
+then
+  CLEAN_BUILD="1"
+fi
+
+# programs to build for the M5Sys
+PROGRAMS="AstroClock ClickBang FileManager HomeControl IChing ImuMonitor Life M5Home mDNSMonitor MQTTMonitor PacketMonitor SoundMonitor SoundRecorder Weather WiFiScanner"
+
+# path from project directory to built firmware
+FIRMWARE_PATH=.pio/build/m5stack-fire
+
+# Location of the project. Line 1 from https://stackoverflow.com/questions/59895
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PROJECT_DIR="$SCRIPT_DIR/.."
+
+# Go back where we came from at the end
+ORIG_DIR=.
+
+# Destination location
+PROP_DIR=$PROJECT_DIR/SD
+
+# Location of M5Sys application projects
+APPS_DIR=$PROJECT_DIR/Apps
+
+# Data files for IChing
+ICHING_DATA=$APPS_DIR/IChing/data/hexagrams.*
+
+# platformio command
+PLATFORMIO_CMD=~/.platformio/penv/bin/platformio
+
+# clean the output directory
+rm -rv $PROP_DIR/*
+
+# copy IChing data files to PROP/data
+mkdir $PROP_DIR/data
+cp $ICHING_DATA $PROP_DIR/data
+
+for PROG in $PROGRAMS
+do
+  cd "$APPS_DIR/$PROG"
+  if [ "1" == $CLEAN_BUILD ]
+  then
+    "$PLATFORMIO_CMD" run --target clean
+  fi
+  "$PLATFORMIO_CMD" run --environment m5stack-fire
+  cp -v "$APPS_DIR/$PROG/$FIRMWARE_PATH/$PROG.bin" "$PROP_DIR/$PROG.bin"
+done
+
+# M5StackUpdater looks for a menu program named 'menu.bin'.
+mv -v "$PROP_DIR/M5Home.bin" "$PROP_DIR/menu.bin"
+
+cd $ORIG_DIR

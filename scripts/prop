@@ -1,0 +1,47 @@
+#!/bin/bash
+# Copies the content from the staging directory for M5Sys to the SD card
+
+echo This will erase the SD card M5STACK and copy the M5Sys files to it
+
+# Turn spotlight indexing off for the SD card
+# mdutil -i off /Volumes/M5STACK
+# mdutil -E /Volumes/M5STACK
+
+# Location of the SD image: Line 1 from https://stackoverflow.com/questions/59895
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PROP_DIR="$SCRIPT_DIR/../SD"
+
+# Erase the SD card
+rm -Rf /Volumes/M5STACK/*
+
+root_files=(
+    AstroClock.bin
+    ClickBang.bin
+    FileManager.bin
+    HomeControl.bin
+    IChing.bin
+    ImuMonitor.bin
+    Life.bin
+    mDNSMonitor.bin
+    MQTTMonitor.bin
+    PacketMonitor.bin
+    SoundMonitor.bin
+    SoundRecorder.bin
+    Weather.bin
+    WiFiScanner.bin
+    menu.bin
+)
+
+data_files=(
+    data/hexagrams.idx
+    data/hexagrams.isam
+)
+
+cd $PROP_DIR
+for F in "${root_files[@]}"; do
+    cp -v $F /Volumes/M5STACK/
+done
+mkdir /Volumes/M5STACK/data
+for F in "${data_files[@]}"; do
+    cp -v $F /Volumes/M5STACK/data/
+done

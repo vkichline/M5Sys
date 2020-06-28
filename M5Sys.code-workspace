@@ -1,0 +1,144 @@
+{
+	"folders": [
+		{
+			"path": "Libraries"
+		},
+		{
+			"path": "Apps/AstroClock"
+		},
+		{
+			"path": "Apps/ClickBang"
+		},
+		{
+			"path": "Apps/FileManager"
+		},
+		{
+			"path": "Apps/HomeControl"
+		},
+		{
+			"path": "Apps/IChing"
+		},
+		{
+			"path": "Apps/ImuMonitor"
+		},
+		{
+			"path": "Apps/Life"
+		},
+		{
+			"path": "Apps/M5Home"
+		},
+		{
+			"path": "Apps/mDNSMonitor"
+		},
+		{
+			"path": "Apps/MQTTMonitor"
+		},
+		{
+			"path": "Apps/PacketMonitor"
+		},
+		{
+			"path": "Apps/SoundMonitor"
+		},
+		{
+			"path": "Apps/SoundRecorder"
+		},
+		{
+			"path": "Apps/Weather"
+		},
+		{
+			"path": "Apps/WiFiScanner"
+		},
+		{
+			"path": "scripts"
+		},
+		{
+			"path": "SD"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"__bit_reference": "cpp",
+			"__hash_table": "cpp",
+			"__split_buffer": "cpp",
+			"__tree": "cpp",
+			"array": "cpp",
+			"deque": "cpp",
+			"initializer_list": "cpp",
+			"iterator": "cpp",
+			"map": "cpp",
+			"string": "cpp",
+			"string_view": "cpp",
+			"unordered_map": "cpp",
+			"unordered_set": "cpp",
+			"vector": "cpp",
+			"typeinfo": "cpp",
+			"__functional_03": "cpp",
+			"functional": "cpp",
+			"stdexcept": "cpp",
+			"algorithm": "cpp",
+			"random": "cpp",
+			"filesystem": "cpp",
+			"locale": "cpp",
+			"queue": "cpp",
+			"*.tcc": "cpp",
+			"memory": "cpp",
+			"__config": "cpp",
+			"__debug": "cpp",
+			"__errc": "cpp",
+			"__functional_base": "cpp",
+			"__locale": "cpp",
+			"__mutex_base": "cpp",
+			"__node_handle": "cpp",
+			"__nullptr": "cpp",
+			"__string": "cpp",
+			"__threading_support": "cpp",
+			"__tuple": "cpp",
+			"atomic": "cpp",
+			"bit": "cpp",
+			"bitset": "cpp",
+			"cctype": "cpp",
+			"chrono": "cpp",
+			"clocale": "cpp",
+			"cmath": "cpp",
+			"complex": "cpp",
+			"cstdarg": "cpp",
+			"cstddef": "cpp",
+			"cstdint": "cpp",
+			"cstdio": "cpp",
+			"cstdlib": "cpp",
+			"cstring": "cpp",
+			"ctime": "cpp",
+			"cwchar": "cpp",
+			"cwctype": "cpp",
+			"exception": "cpp",
+			"fstream": "cpp",
+			"iomanip": "cpp",
+			"ios": "cpp",
+			"iosfwd": "cpp",
+			"istream": "cpp",
+			"limits": "cpp",
+			"mutex": "cpp",
+			"new": "cpp",
+			"numeric": "cpp",
+			"optional": "cpp",
+			"ostream": "cpp",
+			"ratio": "cpp",
+			"sstream": "cpp",
+			"stack": "cpp",
+			"streambuf": "cpp",
+			"system_error": "cpp",
+			"tuple": "cpp",
+			"type_traits": "cpp",
+			"utility": "cpp",
+			"cinttypes": "cpp",
+			"__memory": "cpp"
+		},
+		"cSpell.ignoreWords": [
+			"ledc",
+			"mdns",
+			"println",
+			"ssid"
+		],
+		"FSharp.fsacRuntime": "net"
+	}
+}

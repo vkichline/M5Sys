@@ -9,7 +9,7 @@ then
 fi
 
 # programs to build for the M5Sys
-PROGRAMS="AstroClock ClickBang FileManager HomeControl IChing ImuMonitor Life M5Home mDNSMonitor MQTTMonitor PacketMonitor SoundMonitor SoundRecorder Weather WiFiScanner"
+PROGRAMS="AstroClock ClickBang FileManager HomeControl IChing ImuMonitor Life mDNSMonitor menu MQTTMonitor PacketMonitor SoundMonitor SoundRecorder Weather WiFiScanner"
 
 # path from project directory to built firmware
 FIRMWARE_PATH=.pio/build/m5stack-fire
@@ -50,8 +50,5 @@ do
   "$PLATFORMIO_CMD" run --environment m5stack-fire
   cp -v "$APPS_DIR/$PROG/$FIRMWARE_PATH/$PROG.bin" "$PROP_DIR/$PROG.bin"
 done
-
-# M5StackUpdater looks for a menu program named 'menu.bin'.
-mv -v "$PROP_DIR/M5Home.bin" "$PROP_DIR/menu.bin"
 
 cd $ORIG_DIR

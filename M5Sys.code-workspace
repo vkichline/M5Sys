@@ -25,10 +25,10 @@
 			"path": "Apps/Life"
 		},
 		{
-			"path": "Apps/M5Home"
+			"path": "Apps/mDNSMonitor"
 		},
 		{
-			"path": "Apps/mDNSMonitor"
+			"path": "Apps/menu"
 		},
 		{
 			"path": "Apps/MQTTMonitor"

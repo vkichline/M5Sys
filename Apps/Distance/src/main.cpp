@@ -10,41 +10,44 @@
 #define     TO_RAD          (3.1415926536 / 180.0)
 #define     HOME_LAT        47.72544735
 #define     HOME_LON        -122.1802621
+#define     HOME_ALT        83
 
 M5Sys       m5sys;
 bool        sited           = false;  // True if a home location is selected, else false
 Location_t* home_location   = nullptr;
-Location_t* dest_location   = nullptr;
-double      dest_latitude   = 0.0;
-double      dest_longitude  = 0.0;
+Location_t* dest_location   = new Location_t;
 
 
-// Return distance between two lat/lon pairs in miles.
-double haversine(double lat1, double lon1, double lat2, double lon2) {
-  VERBOSE("haversine(%lf/%lf -> %lf/%lf)\n", lat1, lon1, lat2, lon2);
+// Return distance between two locations in miles.
+//
+double distance(Location_t* origin, Location_t* destination) {
+  VERBOSE("distance(%lf/%lf -> %lf/%lf)\n", origin->latitude, origin->longitude, destination->latitude, destination->longitude);
   double dx, dy, dz;
-  lon1 -= lon2;
-  lon1 *= TO_RAD, lat1 *= TO_RAD, lat2 *= TO_RAD;
+  double delta = (origin->longitude - destination->longitude) * TO_RAD;
+  double lat1  = origin->latitude * TO_RAD;
+  double lat2  = destination->latitude * TO_RAD;
  
   dz = sin(lat1) - sin(lat2);
-  dx = cos(lon1) * cos(lat1) - cos(lat2);
-  dy = sin(lon1) * cos(lat1);
+  dx = cos(delta) * cos(lat1) - cos(lat2);
+  dy = sin(delta) * cos(lat1);
   return (asin(sqrt(dx * dx + dy * dy + dz * dz) / 2) * 2 * R_MI);
 }
 
 
-// Return the heading from one lat/lon to another in degrees
+// Return the heading from one location to another in degrees
 // From https://www.igismap.com/formula-to-find-bearing-or-heading-angle-between-two-points-latitude-longitude
-double bearing_to(double lat1, double lon1, double lat2, double lon2) {
-  VERBOSE("bearing_to(%lf/%lf -> %lf/%lf)\n", lat1, lon1, lat2, lon2);
-  lon1 *= TO_RAD, lat1 *= TO_RAD, lon2 *= TO_RAD, lat2 *= TO_RAD;
-  double dLon     = (lon2 - lon1);
-  double y        = sin(dLon) * cos(lat2);
-  double x        = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon);
+//
+double bearing(Location_t* origin, Location_t* destination) {
+  VERBOSE("bearing_to(%lf/%lf -> %lf/%lf)\n", origin->latitude, origin->longitude, destination->latitude, destination->longitude);
+  double lon1     = origin->longitude      * TO_RAD;
+  double lat1     = origin->latitude       * TO_RAD;
+  double lon2     = destination->longitude * TO_RAD;
+  double lat2     = destination->latitude  * TO_RAD;
+  double delta    = lon2 - lon1;
+  double y        = sin(delta) * cos(lat2);
+  double x        = cos(lat1)  * sin(lat2) - sin(lat1) * cos(lat2) * cos(delta);
   double heading  = atan2(y, x);
-
-  heading = heading * TO_DEG;   // convert radians to degrees
-  return heading;
+  return heading  * TO_DEG;       // convert radians to degrees
 }
 
 
@@ -63,43 +66,43 @@ char* trim_trailing_zeros(char* buffer) {
 
 void calculate() {
   VERBOSE("calculate()\n");
-  double miles    = haversine(home_location->latitude, home_location->longitude, dest_latitude, dest_longitude);
-  double heading  = bearing_to(home_location->latitude, home_location->longitude, dest_latitude, dest_longitude);
+  double miles    = distance(home_location, dest_location);
+  double heading  = bearing(home_location, dest_location);
   ez.msgBox("Distance", String("Distance is " + String(miles) + " miles.\nAzimuth is " + String(heading) + " degrees."));
 }
 
 
-void get_location() {
-  VERBOSE("get_location()\n");
+void get_origin() {
+  VERBOSE("get_origin()\n");
+  home_location = m5sys.position.pick_location();
+  DEBUG("Selected location %.4f, %.4f\n", dest_location->latitude, dest_location->longitude);
+}
+
+
+void get_destination() {
+  VERBOSE("get_destination()\n");
   dest_location = m5sys.position.pick_location();
-  if(dest_location) {
-    DEBUG("Selected location %s\n", dest_location->name);
-    dest_latitude  = dest_location->latitude;
-    dest_longitude = dest_location->longitude;
-  }
-  else {
-    DEBUG("No destination location selected\n");
-  }
+  DEBUG("Selected location %.4f, %.4f\n", dest_location->latitude, dest_location->longitude);
 }
 
 
 void get_latitude() {
   VERBOSE("get_latitude()\n");
   char buffer[32];
-  sprintf(buffer, "%f", dest_latitude);
+  sprintf(buffer, "%f", dest_location->latitude);
   trim_trailing_zeros(buffer);
   String s = ez.textInput("Enter Target Latitude", buffer);
-  sscanf(s.c_str(), "%lf", &dest_latitude);
+  sscanf(s.c_str(), "%lf", &dest_location->latitude);
 }
 
 
 void get_longitude() {
   VERBOSE("get_longitude()\n");
   char buffer[32];
-  sprintf(buffer, "%f", dest_longitude);
+  sprintf(buffer, "%f", dest_location->longitude);
   trim_trailing_zeros(buffer);
   String s = ez.textInput("Enter Target Longitude", buffer);
-  sscanf(s.c_str(), "%lf", &dest_longitude);
+  sscanf(s.c_str(), "%lf", &dest_location->longitude);
 }
 
 
@@ -116,13 +119,22 @@ void loop() {
   m.txtSmall();
   m.buttons("up # back | Home # select ## down #");
   if(!sited)
-    m.addItem("Select Home Position");
+    m.addItem("Select Home Position",           get_origin);
   else {
-    m.addItem("Select destination location",    get_location);
+    m.addItem("Select destination location",    get_destination);
     m.addItem("Select destination latitude",    get_latitude);
     m.addItem("Select destination longitude",   get_longitude);
     m.addItem("Calculate Distance and Azimuth", calculate);
   }
-  m.run();
-  m5sys.goHome();
+  while(true) {
+    if(0 == m.runOnce()) m5sys.goHome();
+    String result = m.pickName();
+    if(0 == result.compareTo("Select Home Position")) {
+      m.deleteItem(1);
+      m.addItem("Select destination location",    get_destination);
+      m.addItem("Select destination latitude",    get_latitude);
+      m.addItem("Select destination longitude",   get_longitude);
+      m.addItem("Calculate Distance and Azimuth", calculate);
+    }
+  }
 }

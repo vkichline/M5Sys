@@ -9,7 +9,7 @@ then
 fi
 
 # programs to build for the M5Sys
-PROGRAMS="AstroClock ClickBang FileManager HomeControl IChing ImuMonitor Life mDNSMonitor menu MQTTMonitor PacketMonitor SoundMonitor SoundRecorder Weather WiFiScanner"
+PROGRAMS="AstroClock ClickBang Distance FileManager HomeControl IChing ImuMonitor Life mDNSMonitor menu MQTTMonitor PacketMonitor SoundMonitor SoundRecorder Weather WiFiScanner"
 
 # path from project directory to built firmware
 FIRMWARE_PATH=.pio/build/m5stack-fire

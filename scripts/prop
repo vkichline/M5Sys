@@ -17,6 +17,7 @@ rm -Rf /Volumes/M5STACK/*
 root_files=(
     AstroClock.bin
     ClickBang.bin
+    Distance.bin
     FileManager.bin
     HomeControl.bin
     IChing.bin

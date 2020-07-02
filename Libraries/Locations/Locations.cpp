@@ -17,7 +17,7 @@ void Locations::begin(Logger* logger) {
 }
 
 
-void Locations::add(String name, float lat, float lon, int alt) {
+void Locations::add(String name, double lat, double lon, int alt) {
   _log->verbose("Locations::add(%s, %.4f, %.4f, %d)\n", name.c_str(), lat, lon, alt);
   Location_t          new_loc;
   new_loc.name      = name;
@@ -67,9 +67,9 @@ void Locations::readFlash() {
     idx =  "LOC" + (String)index;
     String name  = prefs.getString(idx.c_str(), "");
     idx =  "LAT" + (String)index;
-    float  lat   = prefs.getFloat(idx.c_str(), 100.0);  // 100 is an impossible value
+    double lat   = prefs.getDouble(idx.c_str(), 100.0);  // 100 is an impossible value
     idx =  "LON" + (String)index;
-    float  lon   = prefs.getFloat(idx.c_str(), 0.0);
+    double lon   = prefs.getDouble(idx.c_str(), 0.0);
     idx =  "ALT" + (String)index;
     int    alt   = prefs.getInt(idx.c_str(), 0);
     if (name != "") {
@@ -100,9 +100,9 @@ void Locations::writeFlash() {
     idx = "LOC" + (String)(n + 1);
     prefs.putString(idx.c_str(), locations[n].name);
     idx = "LAT" + (String)(n + 1);
-    prefs.putFloat(idx.c_str(), locations[n].latitude);
+    prefs.putDouble(idx.c_str(), locations[n].latitude);
     idx = "LON" + (String)(n + 1);
-    prefs.putFloat(idx.c_str(), locations[n].longitude);
+    prefs.putDouble(idx.c_str(), locations[n].longitude);
     idx = "ALT" + (String)(n + 1);
     prefs.putInt(idx.c_str(), locations[n].altitude);
   }
@@ -182,8 +182,8 @@ Location_t* const Locations::pick_location() {
 void Locations::_create_location() {
   _log->verbose("Locations::_create_location()\n");
   String name, temp;
-  float  lat  = 0.0;
-  float  lon  = 0.0;
+  double lat  = 0.0;
+  double lon  = 0.0;
   int    alt  = 0;
 
   ezMenu m("Create Location");

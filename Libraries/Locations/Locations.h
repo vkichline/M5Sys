@@ -4,17 +4,23 @@
 #include <Logger.h>
 
 struct Location_t {
+  Location_t(const char* name = "", double latitude = 0.0, double longitude = 0.0, int altitude = 0) {
+    this->name      = name;
+    this->latitude  = latitude;
+    this->longitude = longitude;
+    this->altitude  = altitude;
+  }
   String  name;
-  float   latitude;
-  float   longitude;
-  int     altitude;   // Unit: meters
+  double  latitude;
+  double  longitude;
+  int     altitude;    // Unit: meters
 };
 
 
 class Locations {
   public:
     static void                     begin(Logger* logger);
-    static void                     add(String name, float lat, float lon, int alt=0);
+    static void                     add(String name, double lat, double lon, int alt=0);
     static bool                     remove(int8_t index);
     static bool                     remove(String name);
     static int8_t                   indexForName(String name);

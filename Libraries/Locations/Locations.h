@@ -29,6 +29,8 @@ class Locations {
     static void                     menu();
     static Location_t* const        get_current();
     static Location_t* const        pick_location();
+    static double                   distance(Location_t* origin, Location_t* destination);
+    static double                   bearing (Location_t* origin, Location_t* destination);
     static std::vector<Location_t>  locations;
   private:
     static void                     _clear_locations();

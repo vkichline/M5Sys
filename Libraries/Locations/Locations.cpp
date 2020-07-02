@@ -3,6 +3,10 @@
 #include "Locations.h"
 
 #define M5SYS_PREFS_NAME  "M5Sys"
+#define R_KM              6371
+#define R_MI              3958.8
+#define TO_DEG            (180.0 / 3.1415926536)
+#define TO_RAD            (3.1415926536 / 180.0)
 
 
 std::vector<Location_t>   Locations::locations;
@@ -298,4 +302,32 @@ void Locations::_inspect_location(String name) {
   ez.canvas.x(160);
   ez.canvas.println(locations[index].altitude);
   ez.buttons.wait();
+}
+
+
+double Locations::distance(Location_t* origin, Location_t* destination) {
+  _log->verbose("Locations::distance(%lf/%lf -> %lf/%lf)\n", origin->latitude, origin->longitude, destination->latitude, destination->longitude);
+  double dx, dy, dz;
+  double delta = (origin->longitude - destination->longitude) * TO_RAD;
+  double lat1  = origin->latitude * TO_RAD;
+  double lat2  = destination->latitude * TO_RAD;
+ 
+  dz = sin(lat1) - sin(lat2);
+  dx = cos(delta) * cos(lat1) - cos(lat2);
+  dy = sin(delta) * cos(lat1);
+  return (asin(sqrt(dx * dx + dy * dy + dz * dz) / 2) * 2 * R_MI);
+}
+
+
+double Locations::bearing (Location_t* origin, Location_t* destination) {
+  _log->verbose("Locations::bearing_to(%lf/%lf -> %lf/%lf)\n", origin->latitude, origin->longitude, destination->latitude, destination->longitude);
+  double lon1     = origin->longitude      * TO_RAD;
+  double lat1     = origin->latitude       * TO_RAD;
+  double lon2     = destination->longitude * TO_RAD;
+  double lat2     = destination->latitude  * TO_RAD;
+  double delta    = lon2 - lon1;
+  double y        = sin(delta) * cos(lat2);
+  double x        = cos(lat1)  * sin(lat2) - sin(lat1) * cos(lat2) * cos(delta);
+  double heading  = atan2(y, x);
+  return heading  * TO_DEG;       // convert radians to degrees
 }

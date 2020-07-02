@@ -163,6 +163,22 @@ void Locations::menu() {
 }
 
 
+Location_t* const Locations::pick_location() {
+  _log->verbose("Locations::pick_location()\n");
+  if(0 == locations.size()) return nullptr; // cannot display a menu with no items
+  ezMenu m("Pick a Location");
+  m.txtSmall();
+  m.buttons("up # Back # select ## down #");
+  for(uint8_t n = 0; n < locations.size(); n++) {
+    m.addItem(locations[n].name);
+  }
+  if(0 == m.runOnce()) return nullptr;
+  int8_t index = indexForName(m.pickName());
+  if(0 > index) return nullptr;
+  return &locations[index];
+}
+
+
 void Locations::_create_location() {
   _log->verbose("Locations::_create_location()\n");
   String name, temp;

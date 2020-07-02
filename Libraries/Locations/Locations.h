@@ -22,6 +22,7 @@ class Locations {
     static void                     writeFlash();
     static void                     menu();
     static Location_t* const        get_current();
+    static Location_t* const        pick_location();
     static std::vector<Location_t>  locations;
   private:
     static void                     _clear_locations();

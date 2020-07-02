@@ -18,39 +18,6 @@ Location_t* home_location   = nullptr;
 Location_t* dest_location   = new Location_t;
 
 
-// Return distance between two locations in miles.
-//
-double distance(Location_t* origin, Location_t* destination) {
-  VERBOSE("distance(%lf/%lf -> %lf/%lf)\n", origin->latitude, origin->longitude, destination->latitude, destination->longitude);
-  double dx, dy, dz;
-  double delta = (origin->longitude - destination->longitude) * TO_RAD;
-  double lat1  = origin->latitude * TO_RAD;
-  double lat2  = destination->latitude * TO_RAD;
- 
-  dz = sin(lat1) - sin(lat2);
-  dx = cos(delta) * cos(lat1) - cos(lat2);
-  dy = sin(delta) * cos(lat1);
-  return (asin(sqrt(dx * dx + dy * dy + dz * dz) / 2) * 2 * R_MI);
-}
-
-
-// Return the heading from one location to another in degrees
-// From https://www.igismap.com/formula-to-find-bearing-or-heading-angle-between-two-points-latitude-longitude
-//
-double bearing(Location_t* origin, Location_t* destination) {
-  VERBOSE("bearing_to(%lf/%lf -> %lf/%lf)\n", origin->latitude, origin->longitude, destination->latitude, destination->longitude);
-  double lon1     = origin->longitude      * TO_RAD;
-  double lat1     = origin->latitude       * TO_RAD;
-  double lon2     = destination->longitude * TO_RAD;
-  double lat2     = destination->latitude  * TO_RAD;
-  double delta    = lon2 - lon1;
-  double y        = sin(delta) * cos(lat2);
-  double x        = cos(lat1)  * sin(lat2) - sin(lat1) * cos(lat2) * cos(delta);
-  double heading  = atan2(y, x);
-  return heading  * TO_DEG;       // convert radians to degrees
-}
-
-
 // Truncate trailing zeros AFTER the decimal point.
 // Return same value passed in, for fluency
 //
@@ -66,8 +33,8 @@ char* trim_trailing_zeros(char* buffer) {
 
 void calculate() {
   VERBOSE("calculate()\n");
-  double miles    = distance(home_location, dest_location);
-  double heading  = bearing(home_location, dest_location);
+  double miles    = m5sys.position.distance(home_location, dest_location);
+  double heading  = m5sys.position.bearing(home_location, dest_location);
   ez.msgBox("Distance", String("Distance is " + String(miles) + " miles.\nAzimuth is " + String(heading) + " degrees."));
 }
 

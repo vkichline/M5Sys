@@ -142,11 +142,11 @@ void M5Sys::auto_connect() {
   if(stat) {
     int sz = preferences.getString(CONNECTION_TYPE, buffer, _M5SYSBUFFERSIZE-1);
     if(0 == sz) {
-      log.error("M5SysBase::auto_connect: failed to read preference conn_type\n");
+      log.error("M5Sys::auto_connect: failed to read preference conn_type\n");
     }
   }
   else {
-    log.error("M5SysBase::auto_connect: failed to open M5ez\n");
+    log.error("M5Sys::auto_connect: failed to open M5ez\n");
   }
   preferences.end();
 
@@ -163,7 +163,6 @@ void M5Sys::auto_connect() {
   // use the M5ez autoConnect method
   log.debug("Using M5ez autoconnect\n");
   ez.wifi.autoConnect = true;
-  ez.wifi.writeFlash();   // BUGBUG: I am not sure this should be here
 }
 
 
@@ -194,4 +193,28 @@ String M5Sys::pick_connection(const char* currPick) {
   }
   if(0 == m.runOnce()) return String("");
   return m.pickName();
+}
+
+
+// Loop and display minimal output while waiting for WiFi connection.
+// Return true if connected, false if timed out.
+//
+bool M5Sys::wait_for_wifi(int timeout_ms) {
+  log.verbose("M5Sys::wait_for_wifi(%d)\n", timeout_ms);
+  long end_time = millis() + timeout_ms;
+  while(!WiFi.isConnected()) {
+    log.info(".");
+    ez.canvas.print(".");
+    delay(500);
+    if(millis() > end_time) {
+      log.info("\nTimeout.\n");
+      ez.canvas.println();
+      ez.canvas.println("Timeout.");
+      return false;
+    }
+  }
+  log.info("\nConnected.\n");
+  ez.canvas.println();
+  ez.canvas.println("Connected.");
+  return true;
 }

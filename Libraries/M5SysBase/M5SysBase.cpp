@@ -3,7 +3,10 @@
 #include <M5StackUpdater.h>
 #include "M5SysBase.h"
 
-#define M5EZ_PREFS_NAME  "M5ez"
+#define _M5SYSBUFFERSIZE  64
+#define M5SYS_PREFS_NAME  "M5Sys"
+#define CONNECTION_TYPE   "conn_type"
+#define M5EZ_PREFS_NAME   "M5ez"
 
 
 void M5SysBase::begin(const char* appName, const char* connection) {
@@ -95,6 +98,28 @@ void M5SysBase::wait_for_any_button(bool wait_for_clear) {
 }
 
 
+// Loop and display minimal output while waiting for WiFi connection.
+// Return true if connected, false if timed out.
+//
+bool M5SysBase::wait_for_wifi(int timeout_ms) {
+  log.verbose("M5SysBase::wait_for_wifi(%d)\n", timeout_ms);
+  long end_time = millis() + timeout_ms;
+  while(!WiFi.isConnected()) {
+    log.info(".");
+    M5.Lcd.print(".");
+    delay(500);
+    if(millis() > end_time) {
+      log.info("\nTimeout.\n");
+      M5.Lcd.println("\nTimeout.");
+      return false;
+    }
+  }
+  log.info("\nConnected.\n");
+      M5.Lcd.println("\nConnected.");
+  return true;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 //  WiFi System
@@ -108,8 +133,8 @@ void M5SysBase::wait_for_any_button(bool wait_for_clear) {
 //
 void M5SysBase::start_wifi(const char* connection) {
   log.verbose("start_wifi(%s)\n", connection);
-  WiFi.setAutoConnect(false);
   if(0 == strcmp(NETWORK_CONNECTION_NONE, connection)) {
+    WiFi.setAutoConnect(false);
     disconnect();
   }
   else if(0 == strcmp(NETWORK_CONNECTION_AUTO, connection)) {
@@ -136,7 +161,32 @@ void M5SysBase::disconnect() {
 void M5SysBase::auto_connect() {
   log.verbose("M5SysBase::auto_connect()\n");
   log.info("setting network connection to Autoconnect\n");
-  WiFi.disconnect();
+ char buffer[_M5SYSBUFFERSIZE] = { 0 };
+
+  // Try reading M5Sys prefs, and let our autoconnect override M5ez (unless autoconnect specified)
+  Preferences preferences;
+  bool stat = preferences.begin(M5SYS_PREFS_NAME, true);  // read-only
+  if(stat) {
+    int sz = preferences.getString(CONNECTION_TYPE, buffer, _M5SYSBUFFERSIZE-1);
+    if(0 == sz) {
+      log.error("M5SysBase::auto_connect: failed to read preference conn_type\n");
+    }
+  }
+  else {
+    log.error("M5SysBase::auto_connect: failed to open M5ez\n");
+  }
+  preferences.end();
+
+  // If we succeeded in reading from prefs, use the specified behavior
+  if(strlen(buffer)) {
+    log.debug("%s from prefs = %s\n", CONNECTION_TYPE, buffer);
+    if(0 != strcmp(NETWORK_CONNECTION_AUTO, buffer)) {
+      // anything BUT autoconnect, connect using ssid
+      connect_to_ssid(buffer);
+      return;
+    }
+  }
+  log.debug("Using WiFi autoconnect\n");
   WiFi.setAutoConnect(true);
 }
 

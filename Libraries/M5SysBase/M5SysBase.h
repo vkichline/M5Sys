@@ -10,6 +10,7 @@
 class M5SysBase {
   public:
     virtual void  begin(const char* appName, const char* connection);
+    virtual bool  wait_for_wifi(int timeout_ms = 15000);
     void          start_wifi(const char* connection);
     bool          start_spiffs(bool formatOnFailure = false);
     void          goHome();                     // Load the main menu program and restart

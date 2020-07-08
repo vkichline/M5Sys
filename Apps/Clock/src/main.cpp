@@ -50,6 +50,7 @@ void draw_time() {
 
   // Draw the day specific info only once a day.
   if(first_time || day() != last_day) {
+    DEBUG("updating day\n");
     last_day = day();
     String str = homeTZ.dateTime("l  F jS");
     M5.Lcd.drawCentreString(str, 160, 120, 4);

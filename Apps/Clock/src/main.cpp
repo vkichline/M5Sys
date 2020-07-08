@@ -25,14 +25,17 @@ void draw_time() {
   if(first_time || minuteChanged()) {
     DEBUG("updating hours/minutes\n");
     String str = homeTZ.dateTime("g:i");
-    // Special case, when time changes from 12:59:59 to 1:00:00, width shrinks and erase is needed
-    if(0 == str.compareTo("1:00")) {
+    // Special case, when time changes from 12:59:59 to 1:00:00, or from 9:59:59 to 10:00:00,
+    // display width changes and erase is needed. It could be smaller. Needed?
+    int16_t new_wid = M5.Lcd.textWidth(str, 8);
+    if(time_width  != new_wid) {
+      DEBUG("Erasing time background\n");
       M5.Lcd.fillRect(0, 20, 320, 80, BG_COLOR);
     }
-    time_width = M5.Lcd.textWidth(str, 8);
+    time_width = new_wid;
     VERBOSE("time_width = %d\n", time_width);
     M5.Lcd.drawCentreString(str, 130, 20, 8);
-    seconds_too = true;   // secondChanged won't trigger after minuteChanged did.
+    seconds_too = true;   // Necessary hack; secondChanged won't trigger after minuteChanged did.
   }
 
   // Draw the seconds whenever seconds change.
@@ -42,13 +45,13 @@ void draw_time() {
     String str  = homeTZ.dateTime("s");
     M5.Lcd.drawString(str, 140 + time_width / 2, 20, 6);
     str = homeTZ.dateTime("A");
-    M5.Lcd.drawString(str, 140 + time_width / 2, 70, 4);
+    M5.Lcd.drawString(str, 148 + time_width / 2, 70, 4);
   }
 
   // Draw the day specific info only once a day.
   if(first_time || day() != last_day) {
     last_day = day();
-    String str = homeTZ.dateTime("l  F jS, Y");
+    String str = homeTZ.dateTime("l  F jS");
     M5.Lcd.drawCentreString(str, 160, 120, 4);
     str = homeTZ.dateTime("e (T)");
     M5.Lcd.drawCentreString(str, 160, 170, 2);

@@ -1,31 +1,30 @@
-#include "Clock.h"
+#include "TextClock.h"
 
-#define   Y_LINE_1          20
-#define   Y_LINE_1A         70
-#define   Y_LINE_2          120
-#define   Y_LINE_3          160
-#define   Y_LINE_4          184
 
-static bool      first_time = true;
-static uint8_t   last_day   = 0;
-static int16_t   time_width = 0;
+TextClock::TextClock() {
+  VERBOSE("TextClock::TextClock()\n");
+  first_time  = true;
+  last_day    = 0;
+  time_width  = 0;
+}
 
 
 // When settings are changed, call this routine to redraw everything
 //
-void text_clock_redraw() {
+void TextClock::draw_maximum() {
+  VERBOSE("TextClock::draw_maximum()\n");
   first_time  = true;
   last_day    = 0;
   time_width  = 0;
-  text_clock();
+  draw_minimum();
 }
 
 
 // The workhorse routine; draw as much of the time as needed directly to the screen.
 // Flicker-free fonts make buffering unnecessary
 //
-void text_clock() {
-  VERBOSE("text_clock()\n");
+void TextClock::draw_minimum() {
+  VERBOSE("TextClock::draw_minimum()\n");
   bool seconds_too = false;  // because of how secondChanged & minuteChanged work, only one works
 
   // Draw the hours and the minutes once a minute
@@ -72,9 +71,7 @@ void text_clock() {
   // Draw the button titles only once, or when redrawing
   if(first_time) {
     DEBUG("Drawing button titles\n");
-    M5.Lcd.drawCentreString(BUTTON_A_TITLE, BUTTON_A_CENTER, BUTTON_TITLE_LINE, 1);
-    M5.Lcd.drawCentreString(BUTTON_B_TITLE, BUTTON_B_CENTER, BUTTON_TITLE_LINE, 1);
-    M5.Lcd.drawCentreString(BUTTON_C_TITLE, BUTTON_C_CENTER, BUTTON_TITLE_LINE, 1);
+    draw_button_titles();
   }
 
   if(first_time) first_time = false;

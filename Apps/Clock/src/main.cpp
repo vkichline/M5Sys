@@ -5,35 +5,34 @@
 // and uncommenting #define EZTIME_CACHE_NVS. YOu'll have to do the same.
 
 #include "Clock.h"
-#include <Preferences.h>
+#include "BaseRenderer.h"
+#include "TextClock.h"
+#include "WallClock.h"
 
 #define           TZ_CACHE_NAME     "TZCache"
 
-M5SysBase         m5sys;
-Timezone          homeTZ;
+M5SysBase           m5sys;
+Timezone            homeTZ;
 
-const ColorCombo  colors[]          = { {WHITE, 0x0004}, {RED, BLACK}, {BLACK, WHITE} };
-const uint8_t     num_colors        = sizeof(colors) / sizeof(ColorCombo);
-uint8_t           cur_color         = 0;
+const ColorCombo    colors[]          = { {WHITE, 0x0004}, {RED, BLACK}, {BLACK, WHITE} };
+const uint8_t       num_colors        = sizeof(colors) / sizeof(ColorCombo);
+uint8_t             cur_color         = 0;
 
-const String      timezones[]       = { "America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu" };
-const uint8_t     num_timezones     = sizeof(timezones) / sizeof(String);
-uint8_t           cur_timezone      = 3;      // Because I happen to live on the West Coast
+const String        timezones[]       = { "America/New_York", "America/Chicago", "America/Denver", "America/Los_Angeles", "America/Anchorage", "Pacific/Honolulu" };
+const uint8_t       num_timezones     = sizeof(timezones) / sizeof(String);
+uint8_t             cur_timezone      = 3;      // Because I happen to live on the West Coast
 
-const RenderCombo renderers[]       = { {text_clock, text_clock_redraw}, {wall_clock, wall_clock_redraw} };
-const uint8_t     num_renderers     = sizeof(renderers) / sizeof(RenderCombo);
-uint8_t           cur_renderer      = 0;
-
-void              (*renderer)()     = renderers[cur_renderer].periodic;
+BaseRenderer*       renderers[]       = { new TextClock(), new WallClock() };
+uint8_t             num_renderers     = sizeof(renderers) / sizeof(BaseRenderer*);
+uint8_t             cur_renderer      = 0;
 
 
-// Set the colors, timezone (if synchronized) and renderer.
+// Set the colors, timezone (if synchronized).
 // Call this every time settings are changed.
 //
 void use_settings() {
   M5.Lcd.setTextColor(colors[cur_color].fg_color, colors[cur_color].bg_color);
   M5.Lcd.clearDisplay(colors[cur_color].bg_color);
-  renderer = renderers[cur_renderer].periodic;
   // If we've completed waitForSync()...
   if(timeNotSet != timeStatus()) {
     // The key for the cache name is limited to 15 characters. I think the last 15 will be most unique
@@ -74,7 +73,7 @@ void check_for_buttons() {
   }
   if(changed) {
     use_settings();
-    renderers[cur_renderer].redraw();
+    renderers[cur_renderer]->draw_maximum();
   }
 }
 
@@ -94,6 +93,6 @@ void setup() {
 
 void loop() {
   check_for_buttons();
-  renderer();
+  renderers[cur_renderer]->draw_minimum();
   delay(250); // Call more than once per second for higher precision
 }

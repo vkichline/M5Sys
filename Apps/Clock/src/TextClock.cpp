@@ -5,14 +5,10 @@
 #define   Y_LINE_2          120
 #define   Y_LINE_3          160
 #define   Y_LINE_4          184
-#define   BUTTON_TITLE_LINE 230
-#define   BUTTON_A_TITLE    "Colors"
-#define   BUTTON_B_TITLE    "TimeZones"
-#define   BUTTON_C_TITLE    "Faces"
 
-bool      first_time        = true;
-uint8_t   last_day          = 0;
-int16_t   time_width        = 0;
+static bool      first_time = true;
+static uint8_t   last_day   = 0;
+static int16_t   time_width = 0;
 
 
 // When settings are changed, call this routine to redraw everything
@@ -60,10 +56,12 @@ void text_clock() {
   }
 
   // Draw the day specific info only once a day.
+  // It too can expand or shrink. Erase edge-to-edge to eliminate artifacts.
   if(first_time || day() != last_day) {
     DEBUG("updating day\n");
     last_day = day();
     String str = homeTZ.dateTime("l  F jS");
+    M5.Lcd.fillRect(0, Y_LINE_2, X_WIDTH, BUTTON_TITLE_LINE - Y_LINE_2, colors[cur_color].bg_color); // erase
     M5.Lcd.drawCentreString(str, X_CENTER, Y_LINE_2, 4);
     str = homeTZ.dateTime("e (T)");
     M5.Lcd.drawCentreString(str, X_CENTER, Y_LINE_3, 2);

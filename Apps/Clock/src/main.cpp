@@ -20,7 +20,7 @@ const String      timezones[]       = { "America/New_York", "America/Chicago", "
 const uint8_t     num_timezones     = sizeof(timezones) / sizeof(String);
 uint8_t           cur_timezone      = 3;      // Because I happen to live on the West Coast
 
-const RenderCombo renderers[]       = { {text_clock, text_clock_redraw} };
+const RenderCombo renderers[]       = { {text_clock, text_clock_redraw}, {wall_clock, wall_clock_redraw} };
 const uint8_t     num_renderers     = sizeof(renderers) / sizeof(RenderCombo);
 uint8_t           cur_renderer      = 0;
 
@@ -86,7 +86,6 @@ void setup() {
   M5.Lcd.print("Connecting ");
   m5sys.wait_for_wifi();
   DEBUG("waiting for sync...\n");
-INFO("num_timezones is %d\n", num_timezones);
   waitForSync();
   DEBUG("synchronized\n");
   use_settings();

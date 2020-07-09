@@ -3,6 +3,13 @@
 #include <M5SysBase.h>
 #include <ezTime.h>
 
+#define BUTTON_A_CENTER   68
+#define BUTTON_B_CENTER   160
+#define BUTTON_C_CENTER   254
+#define X_WIDTH           320
+#define X_CENTER          160
+
+
 struct ColorCombo {
   uint16_t  fg_color;
   uint16_t  bg_color;

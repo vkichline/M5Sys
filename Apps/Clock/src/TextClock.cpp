@@ -1,16 +1,18 @@
 #include "Clock.h"
 
-#define   Y_LINE_1    20
-#define   Y_LINE_1A   70
-#define   Y_LINE_2    120
-#define   Y_LINE_3    170
-#define   Y_LINE_4    194
-#define   X_WIDTH     320
-#define   X_CENTER    160
+#define   Y_LINE_1          20
+#define   Y_LINE_1A         70
+#define   Y_LINE_2          120
+#define   Y_LINE_3          160
+#define   Y_LINE_4          184
+#define   BUTTON_TITLE_LINE 230
+#define   BUTTON_A_TITLE    "Colors"
+#define   BUTTON_B_TITLE    "TimeZones"
+#define   BUTTON_C_TITLE    "Faces"
 
-bool     first_time   = true;
-uint8_t  last_day     = 0;
-int16_t  time_width   = 0;
+bool      first_time        = true;
+uint8_t   last_day          = 0;
+int16_t   time_width        = 0;
 
 
 // When settings are changed, call this routine to redraw everything
@@ -68,5 +70,14 @@ void text_clock() {
     str = homeTZ.dateTime("~D~a~y z   ~W~e~e~k W");
     M5.Lcd.drawCentreString(str, X_CENTER, Y_LINE_4, 2);
   }
+
+  // Draw the button titles only once, or when redrawing
+  if(first_time) {
+    DEBUG("Drawing button titles\n");
+    M5.Lcd.drawCentreString(BUTTON_A_TITLE, BUTTON_A_CENTER, BUTTON_TITLE_LINE, 1);
+    M5.Lcd.drawCentreString(BUTTON_B_TITLE, BUTTON_B_CENTER, BUTTON_TITLE_LINE, 1);
+    M5.Lcd.drawCentreString(BUTTON_C_TITLE, BUTTON_C_CENTER, BUTTON_TITLE_LINE, 1);
+  }
+
   if(first_time) first_time = false;
 }

@@ -1,5 +1,7 @@
 {
     "cSpell.ignoreWords": [
+        "eeprom",
+        "eztime",
         "ledc",
         "mdns",
         "println",

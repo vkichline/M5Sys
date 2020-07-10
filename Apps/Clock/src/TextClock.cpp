@@ -1,5 +1,11 @@
 #include "TextClock.h"
 
+#define   Y_LINE_1  20
+#define   Y_LINE_1A 70
+#define   Y_LINE_2  120
+#define   Y_LINE_3  160
+#define   Y_LINE_4  184
+
 
 TextClock::TextClock() {
   VERBOSE("TextClock::TextClock()\n");

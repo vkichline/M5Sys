@@ -6,7 +6,7 @@
 #define LONG_TICK_OFFSET    (CLOCK_RADIUS - 16)
 #define SECOND_HAND_LENGTH  (CLOCK_RADIUS - 20)
 #define MINUTE_HAND_LENGTH  (CLOCK_RADIUS - 40)
-#define HOUR_HAND_LENGTH    (CLOCK_RADIUS - 60)
+#define HOUR_HAND_LENGTH    (CLOCK_RADIUS - 65)
 
 WallClock::WallClock() {
   VERBOSE("WallClock::WallClock()\n");
@@ -36,23 +36,25 @@ void WallClock::draw_minimum() {
   double  hour_angle        = (double)(hour * 3600 + minute * 60 + second) / (double)43200.0 * double(PI * 2.0);
   double  minute_angle      = (double)(minute * 60 + second) / (double)3600.0 * double(PI * 2.0);
   double  second_angle      = (double)second / (double)60.0 * double(PI * 2.0);
-  bool    draw_hours        = (hour_angle   - last_hour_angle)   > 0.003; // enough to render a new line
-  bool    draw_minutes      = (minute_angle - last_minute_angle) > 0.003; // enough to render a new line
+  bool    draw_hours        = abs(hour_angle   - last_hour_angle)   > 0.003; // enough to render a new line
+  bool    draw_minutes      = abs(minute_angle - last_minute_angle) > 0.003; // enough to render a new line
   double  past_hour_angle   = (double)(last_hour * 3600 + last_minute * 60 + last_second) / (double)43200.0 * double(PI * 2.0);
   double  past_minute_angle = (double)(last_minute * 60 + last_second) / (double)3600.0 * double(PI * 2.0);
   last_second_angle         = (double)last_second / (double)60.0 * double(PI * 2.0);
   last_hour                 = hour;
   last_minute               = minute;
   last_second               = second;
+  INFO("draw_hours   = %s  %lf\n", draw_hours   ? "true " : "false", abs(hour_angle   - last_hour_angle));
+  INFO("draw_minutes = %s  %lf\n", draw_minutes ? "true " : "false", abs(minute_angle - last_minute_angle));
 
   // Erase hands which have moved
   if(draw_hours) {
-    last_hour_angle = past_hour_angle;
     draw_hand(last_hour_angle,   HOUR_HAND_LENGTH, colors[cur_color].bg_color);
+    last_hour_angle = past_hour_angle;
   }
   if(draw_minutes) {
-    last_minute_angle = past_minute_angle;
     draw_hand(last_minute_angle, MINUTE_HAND_LENGTH, colors[cur_color].bg_color);
+    last_minute_angle = past_minute_angle;
   }
   draw_hand(last_second_angle, SECOND_HAND_LENGTH, colors[cur_color].bg_color);
 
@@ -77,7 +79,7 @@ void WallClock::draw_hand(double angle, uint16_t length, uint16_t color) {
 }
 
 
-// Draw the clock face with ticks for hours and 1/8th hours
+// Draw the clock face with ticks for hours and minutes
 //
 void WallClock::draw_clockface() {
   VERBOSE("WallClock::draw_clockface()\n");
@@ -85,8 +87,8 @@ void WallClock::draw_clockface() {
   M5.Lcd.drawCircle(X_CENTER, CLOCK_Y_CENTER, CLOCK_RADIUS,   colors[cur_color].fg_color);
   M5.Lcd.drawCircle(X_CENTER, CLOCK_Y_CENTER, CLOCK_RADIUS-1, colors[cur_color].fg_color);
 
-  for(int i = 0; i < 96; i++) {
-    lineToEdge(PI/48.0*i, SHORT_TICK_OFFSET, colors[cur_color].fg_color);    
+  for(int i = 0; i < 60; i++) {
+    lineToEdge(PI/30.0*i, SHORT_TICK_OFFSET, colors[cur_color].fg_color);    
   }
   for(int i = 0; i < 12; i++) {
     lineToEdge(PI/6.0*i, LONG_TICK_OFFSET, colors[cur_color].fg_color);    

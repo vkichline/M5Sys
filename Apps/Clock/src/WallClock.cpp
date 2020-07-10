@@ -6,7 +6,8 @@
 #define LONG_TICK_OFFSET    (CLOCK_RADIUS - 16)
 #define SECOND_HAND_LENGTH  (CLOCK_RADIUS - 20)
 #define MINUTE_HAND_LENGTH  (CLOCK_RADIUS - 40)
-#define HOUR_HAND_LENGTH    (CLOCK_RADIUS - 65)
+#define HOUR_HAND_LENGTH    (CLOCK_RADIUS - 60)
+
 
 WallClock::WallClock() {
   VERBOSE("WallClock::WallClock()\n");
@@ -20,16 +21,23 @@ WallClock::WallClock() {
 
 
 void WallClock::draw_maximum() {
+  VERBOSE("WallClock::draw_maximum()\n");
   M5.Lcd.fillScreen(colors[cur_color].bg_color);
   draw_clockface();
-  draw_minimum();
+  draw_hands(false);
   draw_button_titles();
 }
 
 
 void WallClock::draw_minimum() {
   VERBOSE("WallClock::draw_minimum()\n");
-  if(last_second == homeTZ.second()) return;
+  draw_hands(true);
+}
+
+
+void WallClock::draw_hands(bool on_second) {
+  VERBOSE("WallClock::on_second(%s)\n", on_second ? "true" : "false");
+  if(on_second && last_second == homeTZ.second()) return;
   uint8_t hour              = homeTZ.hour();
   uint8_t minute            = homeTZ.minute();
   uint8_t second            = homeTZ.second();

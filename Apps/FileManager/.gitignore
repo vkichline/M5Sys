@@ -6,3 +6,5 @@
 .fake
 .ionide
 .DS_Store
+**/c_cpp_properties.json
+**/launch.json

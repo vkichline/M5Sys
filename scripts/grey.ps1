@@ -1,5 +1,5 @@
 Write-Host "Building for M5Stack Grey"
-$programs       = @('AstroClock', 'ClickBang', 'Clock', 'Distance', 'FileManage', 'HomeControl',
+$programs       = @('AstroClock', 'ClickBang', 'Clock', 'Distance', 'FileManager', 'HomeControl',
                     'IChing', 'ImuMonitor', 'Life', 'mDNSMonitor', 'menu', 'MQTTMonitor',
                     'PacketMonitor', 'SoundMonitor', 'SoundRecorder', 'Weather', 'WiFiScanner')
 $firmware_path  = '.pio/build/m5stack-grey'             # path from project directory to built firmware

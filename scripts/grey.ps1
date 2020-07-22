@@ -17,3 +17,4 @@ foreach ($prog in $programs) {
     Invoke-Expression 'platformio run --environment m5stack-grey'
     Copy-Item "$apps_dir/$prog/$firmware_path/$prog.bin" "$prop_dir/$prog.bin"
 }
+Set-Location -Path $script_dir

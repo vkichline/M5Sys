@@ -12,12 +12,14 @@ $project_dir    = "$script_dir/.."                      # Location of the projec
 $prop_dir       = "$project_dir/SD"                     # Drop location
 $dest_dir       = 'G:/'                                 # SD card on my particular system
 $dest_data      = "G:/data"
-                    
+
+Remove-Item $dest_data -Recurse
 Remove-Item 'G:\*.*' -Exclude 'System Volume Information' -Recurse
 Set-Location -Path "$prop_dir"                          # Copy from SD
 foreach ($file in $files) {
     Copy-Item $file $dest_dir                           # Copy over all programs
 }
+New-Item -Path "G:/" -Name "data" -ItemType "directory"
 foreach ($file in $data_files) {
     Copy-Item $file $dest_data                          # Copy over all data files
 }

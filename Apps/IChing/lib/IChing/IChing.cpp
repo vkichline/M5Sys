@@ -118,7 +118,7 @@ HexagramInfo* IChing::load_hexagram_from_offset(int offset) {
 // Return the number of tabs encountered.
 //
 int IChing::read_record(File isam, char* buffer, int buff_size) {
-  VERBOSE("IChing::read_record(isam, buffer, %d\n", buff_size);
+  VERBOSE("IChing::read_record(isam, buffer, %d)\n", buff_size);
   int pos   = 0;
   int tabs  = 0;
   while(pos <= HEXINFO_BUFFER_SIZE) {

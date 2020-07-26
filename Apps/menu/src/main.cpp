@@ -108,6 +108,7 @@ void system_settings_menu() {
   m.addItem("Autoconnect",  ez.wifi.menu);
   m.addItem("Backlight",    ez.backlight.menu);
   m.addItem("Battery",      ez.battery.menu);
+  m.addItem("BLE Settings", ez.ble.menu);
   m.addItem("Clock",        ez.clock.menu);
   m.addItem("Location",     m5sys.position.menu);
   m.addItem("Logging",      m5sys.log.menu);
